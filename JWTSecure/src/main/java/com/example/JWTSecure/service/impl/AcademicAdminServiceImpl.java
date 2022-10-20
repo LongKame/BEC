@@ -8,6 +8,7 @@ import com.example.JWTSecure.repo.StudentRepo;
 import com.example.JWTSecure.repo.UserRepo;
 import com.example.JWTSecure.repo.impl.AcademicAdminCustomRepo;
 import com.example.JWTSecure.repo.impl.QuizCustomRepo;
+import com.example.JWTSecure.repo.impl.RoomCustomRepo;
 import com.example.JWTSecure.service.AcademicAdminService;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,45 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
     private final UserRepo userRepo;
     private final AcademicAdminRepo acadRepo;
     private final QuizCustomRepo quizCustomRepo;
+    private final RoomCustomRepo roomCustomRepo;
 
     @Override
     public List<Quiz> getQuiz(Long levelId) {
-
         return quizCustomRepo.doSearch(levelId);
+    }
+
+    @Override
+    public SearchResultDTO<RoomDTO> getRoom(RoomDTO roomDTO) {
+        List<RoomDTO> dataResult;
+        SearchResultDTO<RoomDTO> searchResult = new SearchResultDTO<>();
+        try {
+            Integer totalRecord = roomCustomRepo.doSearch(roomDTO).size();
+            dataResult = roomCustomRepo.doSearch(roomDTO);
+            if (dataResult != null && !dataResult.isEmpty()) {
+                searchResult.setCode("0");
+                searchResult.setSuccess(true);
+                searchResult.setTitle("Success");
+                searchResult.setMessage("Success");
+                searchResult.setResultData(dataResult);
+                searchResult.setTotalRecordNoLimit(totalRecord);
+            } else {
+                searchResult.setCode("0");
+                searchResult.setSuccess(false);
+                searchResult.setTitle("Failure");
+                searchResult.setMessage("Failure");
+                searchResult.setResultData(Collections.emptyList());
+                searchResult.setTotalRecordNoLimit(0);
+            }
+            return searchResult;
+        } catch (Exception e) {
+            searchResult.setCode("0");
+            searchResult.setSuccess(false);
+            searchResult.setTitle("Failure");
+            searchResult.setMessage("Failure");
+            searchResult.setResultData(Collections.emptyList());
+            searchResult.setTotalRecordNoLimit(0);
+            return searchResult;
+        }
     }
 
     @Override

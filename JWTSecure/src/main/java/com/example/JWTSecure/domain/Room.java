@@ -21,10 +21,11 @@ public class Room {
             sequenceName = "room_sequence",
             allocationSize = 1
     )
-    @GeneratedValue(
-            strategy = GenerationType.AUTO,
-            generator = "room_sequence"
-    )
+//    @GeneratedValue(
+//            strategy = GenerationType.AUTO,
+//            generator = "room_sequence"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="roomname")
     private String roomname;
