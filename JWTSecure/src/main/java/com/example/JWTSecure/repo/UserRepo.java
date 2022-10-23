@@ -3,9 +3,13 @@ package com.example.JWTSecure.repo;
 import com.example.JWTSecure.domain.Role;
 import com.example.JWTSecure.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
@@ -15,5 +19,9 @@ public interface UserRepo extends JpaRepository<User, Long> {
     User findByEmail(String email);
     User findByPhone(String phone);
     User findTopByOrderByIdDesc();
+    @Transactional
+    @Modifying
+    @Query("UPDATE User user SET user.active = ?2 WHERE user.id = ?1")
+    int deActive(boolean active, Long id);
 }
 

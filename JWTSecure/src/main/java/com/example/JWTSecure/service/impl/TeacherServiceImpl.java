@@ -212,8 +212,7 @@ public class TeacherServiceImpl implements TeacherService {
         ResponseStatus responseStatus = new ResponseStatus();
         try {
             Long userId = teacherRepo.findById(addTeacherDTO.getId()).get().getUserId();
-            teacherRepo.deleteById(addTeacherDTO.getId());
-            userRepo.deleteById(userId);
+            userRepo.deActive(false, userId);
             responseStatus.setMessage("Ok");
             responseStatus.setState(true);
             return responseStatus;

@@ -226,8 +226,7 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
         ResponseStatus responseStatus = new ResponseStatus();
         try {
             Long userId = acadRepo.findById(addAcademicAdminDTO.getId()).get().getUserId();
-            acadRepo.deleteById(addAcademicAdminDTO.getId());
-            userRepo.deleteById(userId);
+            userRepo.deActive(false, userId);
             responseStatus.setMessage("Ok");
             responseStatus.setState(true);
             return responseStatus;
