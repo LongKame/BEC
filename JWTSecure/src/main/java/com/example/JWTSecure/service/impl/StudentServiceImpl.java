@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -132,11 +131,6 @@ public class StudentServiceImpl implements StudentService {
         Student student = new Student();
         ResponseStatus rs = new ResponseStatus();
         StringBuilder message = new StringBuilder();
-
-
-//        String timeStamp = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-//        LocalDateTime instant = LocalDateTime.parse(timeStamp, formatter);
 
         if (addStudentDTO != null) {
             if (userRepo.findByUsername(addStudentDTO.getUsername()) != null) {

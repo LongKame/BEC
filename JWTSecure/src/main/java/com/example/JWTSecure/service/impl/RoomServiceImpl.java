@@ -1,20 +1,17 @@
 package com.example.JWTSecure.service.impl;
 
 import com.example.JWTSecure.DTO.ResponseStatus;
-import com.example.JWTSecure.DTO.RoomDTO;
 import com.example.JWTSecure.domain.Room;
 import com.example.JWTSecure.repo.RoomRepo;
 import com.example.JWTSecure.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Collections;
 
 @Service
 @Transactional
