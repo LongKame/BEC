@@ -54,49 +54,49 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception{
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception{
+////        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+////        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+////        http.csrf().disable();
+////        http.sessionManagement().sessionCreationPolicy(STATELESS);
+////        http.authorizeHttpRequests().antMatchers("/api/login/**","/api/token/refresh/**").permitAll();
+////        http.authorizeHttpRequests().antMatchers(GET,"/api/user").hasAuthority("ROLE_ADMIN");
+////        http.authorizeHttpRequests().antMatchers(GET,"/api/view_teacher").permitAll();
+////        http.authorizeHttpRequests().antMatchers(POST,"/api/user/save/**").hasRole("ROLE_ADMIN");
+////        http.authorizeHttpRequests().anyRequest().authenticated();
+////        http.addFilter(customAuthenticationFilter);
+////        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//
 //        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 //        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 //        http.csrf().disable();
 //        http.sessionManagement().sessionCreationPolicy(STATELESS);
-//        http.authorizeHttpRequests().antMatchers("/api/login/**","/api/token/refresh/**").permitAll();
-//        http.authorizeHttpRequests().antMatchers(GET,"/api/user").hasAuthority("ROLE_ADMIN");
-//        http.authorizeHttpRequests().antMatchers(GET,"/api/view_teacher").permitAll();
-//        http.authorizeHttpRequests().antMatchers(POST,"/api/user/save/**").hasRole("ROLE_ADMIN");
-//        http.authorizeHttpRequests().anyRequest().authenticated();
-//        http.addFilter(customAuthenticationFilter);
-//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests()
-                .antMatchers("/api/user/roles")
-                .hasAnyAuthority("ROLE_ADMIN")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/admin/view_teacher")
-                .permitAll()
-                .and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/v*/registration/**", "/h2/**", "/h2/*", "/h2-console/**", "/h2-console/*")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .addFilter(customAuthenticationFilter)
-                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-//                .formLogin();
-
-
-//        http.addFilter(customAuthenticationFilter);
-//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
-    }
+//        http.authorizeRequests()
+//                .antMatchers("/api/user/roles")
+//                .hasAnyAuthority("ROLE_ADMIN")
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/api/admin/view_teacher")
+//                .permitAll()
+//                .and()
+//                .csrf().disable()
+//                .authorizeRequests()
+//                .antMatchers("/api/v*/registration/**", "/h2/**", "/h2/*", "/h2-console/**", "/h2-console/*")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .addFilter(customAuthenticationFilter)
+//                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+////                .formLogin();
+//
+//
+////        http.addFilter(customAuthenticationFilter);
+////        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//
+//
+//    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
@@ -106,13 +106,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//        http.sessionManagement().sessionCreationPolicy(STATELESS);
-//        http.authorizeRequests().anyRequest().permitAll();
-//        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
-//    }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(STATELESS);
+        http.authorizeRequests().anyRequest().permitAll();
+        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+    }
 
     @Bean
     UserDetailsService users() {
