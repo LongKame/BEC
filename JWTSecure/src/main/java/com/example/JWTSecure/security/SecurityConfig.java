@@ -2,6 +2,7 @@ package com.example.JWTSecure.security;
 
 import com.example.JWTSecure.filter.CustomAuthenticationFilter;
 import com.example.JWTSecure.filter.CustomAuthorizationFilter;
+import com.example.JWTSecure.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +18,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -34,9 +33,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final UserServiceImpl appUserService;
+    private final PasswordEncoder passwordEncoder;
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+//    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Bean
@@ -47,8 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-//   @Override
-//    protected void configure(HttpSecurity http) throws Exception{
+    @Override
+    protected void configure(HttpSecurity http) throws Exception{
 //        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 //        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 //        http.csrf().disable();
@@ -60,15 +67,52 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.authorizeHttpRequests().anyRequest().authenticated();
 //        http.addFilter(customAuthenticationFilter);
 //        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-//    }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().anyRequest().permitAll();
-        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+        http.authorizeRequests()
+                .antMatchers("/api/user/roles")
+                .hasAnyAuthority("ROLE_ADMIN")
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/admin/view_teacher")
+                .permitAll()
+                .and()
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/api/v*/registration/**", "/h2/**", "/h2/*", "/h2-console/**", "/h2-console/*")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilter(customAuthenticationFilter)
+                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//                .formLogin();
+
+
+//        http.addFilter(customAuthenticationFilter);
+//        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
     }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(appUserService);
+        return provider;
+    }
+
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.csrf().disable();
+//        http.sessionManagement().sessionCreationPolicy(STATELESS);
+//        http.authorizeRequests().anyRequest().permitAll();
+//        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+//    }
 
     @Bean
     UserDetailsService users() {
@@ -79,7 +123,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .build();
         return new InMemoryUserDetailsManager(user);
     }
-
 
 
     @Bean

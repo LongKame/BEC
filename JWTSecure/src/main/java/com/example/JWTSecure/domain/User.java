@@ -16,10 +16,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -27,7 +24,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class User implements UserDetails{
     @Id
     @SequenceGenerator(
             name = "users_sequence",
@@ -54,8 +51,10 @@ public class User {
     private String address;
     @Column(name="active")
     private boolean active;
+    @Column(name="enabled")
+    private boolean enabled;
 
-    public User(Long id, String username, String fullname, String password, String email, String phone, String address, boolean active) {
+    public User(String username, String fullname, String password, String email, String phone, String address, boolean active) {
         this.id = id;
         this.username = username;
         this.fullname = fullname;
@@ -64,6 +63,55 @@ public class User {
         this.phone = phone;
         this.address = address;
         this.active = active;
+    }
+
+    public User(String username, String password, String fullname, String email, String phone, String address) {
+        this.username = username;
+        this.password = password;
+        this.fullname = fullname;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_STUDENT");
+        return Collections.singletonList(authority);
+    }
+
+//    public Boolean getEnabled() {
+//        return enabled;
+//    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 }
 
