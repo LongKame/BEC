@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
@@ -23,5 +24,10 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User user SET user.active = ?2 WHERE user.id = ?1")
     int deActive(boolean active, Long id);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE User a SET a.enabled=true WHERE a.email=?1")
+    int enableAppUser(String email);
 }
 

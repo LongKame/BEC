@@ -12,4 +12,7 @@ public interface UserService {
     User getUser(String username);
     List<User> getUsers();
     List<Role> getRoles();
+    String signUpUser(User appUser);
+    void saveConfirmationToken(User appUser, String token);
+    int enableAppUser(String email);
 }

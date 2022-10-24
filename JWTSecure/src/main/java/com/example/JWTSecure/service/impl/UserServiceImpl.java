@@ -3,8 +3,9 @@ package com.example.JWTSecure.service.impl;
 import com.example.JWTSecure.domain.Role;
 import com.example.JWTSecure.domain.User;
 import com.example.JWTSecure.repo.*;
-import com.example.JWTSecure.service.TeacherService;
 import com.example.JWTSecure.service.UserService;
+import com.example.JWTSecure.token.ConfirmationToken;
+import com.example.JWTSecure.token.ConfirmationTokenService;
 import com.example.JWTSecure.validate.Validate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -42,6 +44,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private RoleRepo roleRepo;
     @Autowired
     private final PasswordEncoder passwordEncoder;
+    private final ConfirmationTokenService confirmationTokenService;
+
 
     @Override
     public User saveUser(User user) {
@@ -80,6 +84,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = new User();
         Long userId;
+
         if (Validate.validateEmail(username)) {
             user = userRepo.findByEmail(username);
             username = user.getUsername();
@@ -89,11 +94,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             username = user.getUsername();
             userId = user.getId();
         }
+
         if (user == null) {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
             log.info("User found in the database: {}", username);
+        }
+
+        if(!user.isEnabled()){
+            log.error("Account is enabled");
+            throw new UsernameNotFoundException("Account is enabled, verify");
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -121,5 +132,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         map.put("username", user.getUsername());
         map.put("name", user.getFullname());
         return new org.springframework.security.core.userdetails.User(map.toString(), user.getPassword(), authorities);
+    }
+
+    @Override
+    public String signUpUser(User appUser) {
+        boolean userExists = userRepo.findByEmail(appUser.getEmail())!=null;
+
+        if (userExists) {
+            User appUserPrevious =  userRepo.findByEmail(appUser.getEmail());
+            Boolean isEnabled = appUserPrevious.isEnabled();
+
+            if (!isEnabled) {
+                String token = UUID.randomUUID().toString();
+                saveConfirmationToken(appUserPrevious, token);
+                return token;
+            }
+            throw new IllegalStateException(String.format("User with email %s already exists!", appUser.getEmail()));
+        }
+
+        String encodedPassword = passwordEncoder.encode(appUser.getPassword());
+        appUser.setPassword(encodedPassword);
+        userRepo.save(appUser);
+        String token = UUID.randomUUID().toString();
+        saveConfirmationToken(appUser, token);
+        return token;
+    }
+
+    @Override
+    public void saveConfirmationToken(User appUser, String token) {
+        ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15), appUser);
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+    }
+
+    @Override
+    public int enableAppUser(String email) {
+        return userRepo.enableAppUser(email);
+
     }
 }
