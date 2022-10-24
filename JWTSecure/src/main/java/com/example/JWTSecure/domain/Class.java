@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -33,4 +34,6 @@ public class Class {
     private String name;
     @Column(name="number_of_student")
     private int numberOfStudent;
+    @Column(name="start_date")
+    private Date startDate;
 }
