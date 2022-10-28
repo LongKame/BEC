@@ -1,0 +1,14 @@
+package com.example.JWTSecure.service;
+
+import com.example.JWTSecure.DTO.CurriculumDTO;
+import com.example.JWTSecure.DTO.SearchResultDTO;
+import com.example.JWTSecure.domain.Curriculum;
+
+public interface CurriculumService {
+
+    CurriculumDTO save(Curriculum curr);
+
+    SearchResultDTO<CurriculumDTO> getCurriculum(Long id);
+
+    SearchResultDTO<CurriculumDTO> findByCourseId(Long courseID, Integer page);
+}
