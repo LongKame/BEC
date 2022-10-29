@@ -30,10 +30,17 @@ public class CurriculumController {
         return curriculumService.getCurriculum(id);
     }
 
-    @GetMapping("/course/{courseId}/{page}")
+    @GetMapping("/search")
     public SearchResultDTO<CurriculumDTO> findByCourseId(
-            @PathVariable Long courseId, @PathVariable Integer page
+            @RequestParam Long courseId, @RequestParam Integer page
     ) {
         return curriculumService.findByCourseId(courseId, page);
     }
+
+    @GetMapping("/{id}/count-learning")
+    public Long countLearningStudent(@PathVariable Long id) {
+        return curriculumService.countLearningStudent(id);
+    }
+
+    //TODO: upload, replace, delete curriculum document(url)
 }

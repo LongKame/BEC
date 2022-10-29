@@ -11,4 +11,6 @@ public interface CurriculumService {
     SearchResultDTO<CurriculumDTO> getCurriculum(Long id);
 
     SearchResultDTO<CurriculumDTO> findByCourseId(Long courseID, Integer page);
+
+    Long countLearningStudent(Long id);
 }
