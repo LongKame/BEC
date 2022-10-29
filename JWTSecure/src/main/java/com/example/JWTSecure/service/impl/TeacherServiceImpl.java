@@ -39,7 +39,7 @@ public class TeacherServiceImpl implements TeacherService {
         List<TeacherDTO> dataResult;
         SearchResultDTO<TeacherDTO> searchResult = new SearchResultDTO<>();
         try {
-            Integer totalRecord = teacherCustomRepo.doSearch(productDTO).size();
+            Integer totalRecord = teacherCustomRepo.getTotal(productDTO).size();
             dataResult = teacherCustomRepo.doSearch(productDTO);
             if (dataResult != null && !dataResult.isEmpty()) {
                 searchResult.setCode("0");
@@ -74,13 +74,12 @@ public class TeacherServiceImpl implements TeacherService {
         User user = new User();
         Teacher teacher = new Teacher();
 
-
         ResponseStatus rs = new ResponseStatus();
         StringBuilder message = new StringBuilder();
         try {
             if (addTeacherDTO != null) {
 
-                if (userRepo.findByUsername(addTeacherDTO.getUsername()) != null) {
+                if (userRepo.findByUsername(addTeacherDTO.getUser_name()) != null) {
                     message.append("Username ");
                 }
                 if (userRepo.findByEmail(addTeacherDTO.getEmail()) != null) {
@@ -90,30 +89,33 @@ public class TeacherServiceImpl implements TeacherService {
                     message.append("Phone ");
                 }
 
-                if (userRepo.findByUsername(addTeacherDTO.getUsername()) == null
+                if (!StringUtils.isBlank(message)) {
+                    message.append("is existed");
+                    rs.setMessage(message.toString());
+                    rs.setState(false);
+                    return rs;
+                }
+
+                if (userRepo.findByUsername(addTeacherDTO.getUser_name()) == null
                         || userRepo.findByEmail(addTeacherDTO.getEmail()) == null
                         || userRepo.findByPhone(addTeacherDTO.getPhone()) == null) {
-                    user.setUsername(addTeacherDTO.getUsername());
-                    user.setFullname(addTeacherDTO.getFullname());
+                    user.setUsername(addTeacherDTO.getUser_name());
+                    user.setFullname(addTeacherDTO.getFull_name());
                     user.setPassword(passwordEncoder.encode(addTeacherDTO.getPassword()));
                     user.setEmail(addTeacherDTO.getEmail());
                     user.setPhone(addTeacherDTO.getPhone());
                     user.setAddress(addTeacherDTO.getAddress());
-                    user.setActive(addTeacherDTO.isActive());
+                    user.setActive(true);
                     userRepo.save(user);
 
-                    teacher.setUserId(userRepo.findTopByOrderByIdDesc().getId());
+                    teacher.setUserId(userRepo.findByUsername(addTeacherDTO.getUser_name()).getId());
                     teacher.setRoleId(3L);
                     teacherRepo.save(teacher);
                     rs.setMessage("Ok");
                     rs.setState(true);
                 }
 
-                if (!StringUtils.isBlank(message)) {
-                    message.append("is existed");
-                    rs.setMessage(message.toString());
-                    rs.setState(false);
-                }
+
             } else {
                 rs.setMessage("Failure");
                 rs.setState(false);
@@ -142,9 +144,8 @@ public class TeacherServiceImpl implements TeacherService {
         ResponseStatus rs = new ResponseStatus();
         StringBuilder message = new StringBuilder();
 
-
         if (addTeacherDTO != null) {
-            if (userRepo.findByUsername(addTeacherDTO.getUsername()) != null) {
+            if (userRepo.findByUsername(addTeacherDTO.getUser_name()) != null) {
                 message.append("Username ");
             }
             if (userRepo.findByEmail(addTeacherDTO.getEmail()) != null) {
@@ -156,16 +157,28 @@ public class TeacherServiceImpl implements TeacherService {
                 rs.setState(false);
                 return rs;
             }
-
             try {
-                if (userRepo.findByUsername(addTeacherDTO.getUsername()) == null) {
-                    if (userRepo.findByEmail(addTeacherDTO.getEmail()) == null) {
-                        teacher.setUserId(addTeacherDTO.getId());
-                        teacher.setRoleId(4L);
-                        teacherRepo.save(teacher);
+                if (addTeacherDTO.getUser_name().equals(userRepo.findById(addTeacherDTO.getId()).get().getUsername())) {
+                    if (addTeacherDTO.getEmail().equals(userRepo.findById(addTeacherDTO.getId()).get().getEmail())) {
                         user.setId(addTeacherDTO.getId());
                         user.setUsername(userRepo.findById(addTeacherDTO.getId()).get().getUsername());
-                        user.setFullname(addTeacherDTO.getFullname());
+                        user.setFullname(addTeacherDTO.getFull_name());
+                        user.setPassword(userRepo.findById(addTeacherDTO.getId()).get().getPassword());
+                        user.setEmail(userRepo.findById(addTeacherDTO.getId()).get().getEmail());
+                        user.setPhone(addTeacherDTO.getPhone());
+                        user.setAddress(addTeacherDTO.getAddress());
+                        user.setActive(addTeacherDTO.isActive());
+                        userRepo.save(user);
+                        rs.setMessage("Ok");
+                        rs.setState(true);
+                    }
+                }
+
+                if (userRepo.findByUsername(addTeacherDTO.getUser_name()) == null) {
+                    if (userRepo.findByEmail(addTeacherDTO.getEmail()) == null) {
+                        user.setId(addTeacherDTO.getId());
+                        user.setUsername(userRepo.findById(addTeacherDTO.getId()).get().getUsername());
+                        user.setFullname(addTeacherDTO.getFull_name());
                         user.setPassword(userRepo.findById(addTeacherDTO.getId()).get().getPassword());
                         user.setEmail(userRepo.findById(addTeacherDTO.getId()).get().getEmail());
                         user.setPhone(addTeacherDTO.getPhone());
@@ -208,19 +221,28 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public ResponseStatus deleteTeacher(AddTeacherDTO addTeacherDTO) {
+    public ResponseStatus deleteTeacher(Long id) {
         ResponseStatus responseStatus = new ResponseStatus();
         try {
-            Long userId = teacherRepo.findById(addTeacherDTO.getId()).get().getUserId();
-            userRepo.deActive(false, userId);
-            responseStatus.setMessage("Ok");
-            responseStatus.setState(true);
+            if (id != null) {
+                userRepo.deactive(id);
+                responseStatus.setState(true);
+                responseStatus.setMessage("Success");
+            } else {
+                responseStatus.setState(false);
+                responseStatus.setMessage("Failure");
+            }
             return responseStatus;
         } catch (Exception e) {
-            responseStatus.setMessage("Failure");
             responseStatus.setState(false);
+            responseStatus.setMessage("Failure");
             return responseStatus;
         }
+    }
+
+    @Override
+    public List<Teacher> list() {
+        return teacherRepo.findAll();
     }
 
 }

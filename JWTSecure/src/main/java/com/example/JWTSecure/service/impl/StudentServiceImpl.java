@@ -41,7 +41,7 @@ public class StudentServiceImpl implements StudentService {
         List<StudentDTO> dataResult;
         SearchResultDTO<StudentDTO> searchResult = new SearchResultDTO<>();
         try {
-            Integer totalRecord = studentCustomRepo.doSearch(studentDTO).size();
+            Integer totalRecord = studentCustomRepo.getTotal(studentDTO).size();
             dataResult = studentCustomRepo.doSearch(studentDTO);
             if (dataResult != null && !dataResult.isEmpty()) {
                 searchResult.setCode("0");
@@ -176,6 +176,24 @@ public class StudentServiceImpl implements StudentService {
             }
         }
         return rs;
+    }
+
+    @Override
+    public List<StudentDTO> getListStudentByIdClass(Long id) {
+        try {
+            return studentCustomRepo.getListStudentByIdClass(id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<StudentDTO> detailStudentClass(Long id) {
+        try {
+            return studentCustomRepo.detailStudentClass(id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

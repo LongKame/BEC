@@ -9,5 +9,5 @@ public interface RoomService {
 
     ResponseStatus addRoom(Room room);
     ResponseStatus editRoom(Room room);
-    ResponseStatus deleteRoom(Room room);
+    ResponseStatus deleteRoom(Long id);
 }

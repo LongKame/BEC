@@ -33,8 +33,8 @@ public class JwtSecureApplication {
 //			DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 //			LocalDate localDate =  LocalDate.parse(date, format);
 //
-//			userService.saveUser(new User(null,"LoGi","Nguyen Thanh Long","123456","longgi@gmail.com","0971858758","Thai Binh",true));
-//			userService.saveUser(new User(null,"LongKame","Hoang Thanh Giang","123456","longthanh@gmail.com","0971858757","Ha Giang",true));
+//			userService.saveUser(new User(null,"longgiang","Nguyen Thanh Giang","123456","gianglong@gmail.com","0971230943","Thai Binh",true, true));
+//			userService.saveUser(new User(null,"longyoko","Hoang Thanh Giang","123456","longyoko@gmail.com","0872132182","Ha Giang",true, true));
 
 //
 //			userService.addRoleToUser("LongKame","ROLE_USER");

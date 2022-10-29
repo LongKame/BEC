@@ -74,23 +74,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public ResponseStatus deleteRoom(Room room) {
-//        ResponseStatus responseStatus = new ResponseStatus();
-//        try {
-//            if (room != null) {
-//                roomRepo.deleteById(room.getId());
-//                responseStatus.setState(true);
-//                responseStatus.setMessage("Success");
-//            } else {
-//                responseStatus.setState(false);
-//                responseStatus.setMessage("Failure");
-//            }
-//            return responseStatus;
-//        } catch (Exception e) {
-//            responseStatus.setState(false);
-//            responseStatus.setMessage("Failure");
-//            return responseStatus;
-//        }
-        return null;
+    public ResponseStatus deleteRoom(Long id) {
+        ResponseStatus responseStatus = new ResponseStatus();
+        try {
+            if (id != null) {
+                roomRepo.deactive(id);
+                responseStatus.setState(true);
+                responseStatus.setMessage("Success");
+            } else {
+                responseStatus.setState(false);
+                responseStatus.setMessage("Failure");
+            }
+            return responseStatus;
+        } catch (Exception e) {
+            responseStatus.setState(false);
+            responseStatus.setMessage("Failure");
+            return responseStatus;
+        }
     }
 }

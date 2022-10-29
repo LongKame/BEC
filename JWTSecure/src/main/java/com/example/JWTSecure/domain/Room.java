@@ -35,4 +35,6 @@ public class Room {
     private LocalDateTime createdAt;
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
+    @Column(name="active")
+    private boolean active;
 }
