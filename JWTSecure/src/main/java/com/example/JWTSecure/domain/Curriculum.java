@@ -25,18 +25,18 @@ public class Curriculum {
             generator = "curriculum_sequence"
     )
     private Long id;
-    @Column(name="aca_id")
+    @Column(name = "aca_id")
     private Long acaId;
-    @Column(name="course_id")
+    @Column(name = "course_id")
     private Long courseId;
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
-    @Column(name="link_url")
+    @Column(name = "link_url")
     private String linkURL;
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

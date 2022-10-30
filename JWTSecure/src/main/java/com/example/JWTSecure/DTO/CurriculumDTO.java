@@ -12,6 +12,4 @@ public class CurriculumDTO {
     private String name;
     private String linkURL;
     private String description;
-    private Long createdAt;
-    private Long updatedAt;
 }

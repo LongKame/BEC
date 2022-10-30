@@ -17,10 +17,6 @@ import java.util.Objects;
 public class FilesStorageServiceImpl implements FilesStorageService {
     private final Path root = Paths.get("uploads");
 
-    public FilesStorageServiceImpl() {
-        init();
-    }
-
     @Override
     public void init() {
         try {
@@ -38,6 +34,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public String save(MultipartFile file) {
         try {
+            init();
             Files.copy(file.getInputStream(), root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
             return file.getOriginalFilename();
         } catch (Exception e) {
