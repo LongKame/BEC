@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class FilesController {
     private FilesStorageService filesStorageService;
 
-    @GetMapping("/{filename}")
+    @GetMapping("/download")
     @ResponseBody
-    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+    public ResponseEntity<Resource> getFile(@RequestParam String filename) {
         Resource file = filesStorageService.load(filename);
         return ResponseEntity.ok()
                 .header(

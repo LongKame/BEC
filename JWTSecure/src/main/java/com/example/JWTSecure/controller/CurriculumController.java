@@ -4,7 +4,6 @@ import com.example.JWTSecure.DTO.CurriculumDTO;
 import com.example.JWTSecure.DTO.SearchResultDTO;
 import com.example.JWTSecure.domain.Curriculum;
 import com.example.JWTSecure.service.CurriculumService;
-import com.example.JWTSecure.service.FilesStorageService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +31,7 @@ public class CurriculumController {
         return curriculumService.getCurriculum(id);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/get-by-course")
     public SearchResultDTO<CurriculumDTO> findByCourseId(
             @RequestParam Long courseId, @RequestParam Integer page
     ) {
