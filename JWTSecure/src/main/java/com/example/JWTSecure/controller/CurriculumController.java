@@ -4,8 +4,10 @@ import com.example.JWTSecure.DTO.CurriculumDTO;
 import com.example.JWTSecure.DTO.SearchResultDTO;
 import com.example.JWTSecure.domain.Curriculum;
 import com.example.JWTSecure.service.CurriculumService;
+import com.example.JWTSecure.service.FilesStorageService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/curriculum")
@@ -42,5 +44,14 @@ public class CurriculumController {
         return curriculumService.countLearningStudent(id);
     }
 
-    //TODO: upload, replace, delete curriculum document(url)
+    @PutMapping("/{id}/upload-file")
+    public CurriculumDTO uploadFile(@PathVariable Long id ,@RequestParam MultipartFile file) {
+        return curriculumService.uploadFile(id, file);
+    }
+
+    @PutMapping("/{id}/delete-file")
+    public CurriculumDTO deleteFile(@PathVariable Long id ) {
+        return curriculumService.deleteFile(id);
+    }
+
 }
