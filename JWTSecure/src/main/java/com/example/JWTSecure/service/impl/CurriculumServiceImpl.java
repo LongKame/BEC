@@ -3,13 +3,13 @@ package com.example.JWTSecure.service.impl;
 import com.example.JWTSecure.DTO.CurriculumDTO;
 import com.example.JWTSecure.DTO.SearchResultDTO;
 import com.example.JWTSecure.domain.Curriculum;
-import com.example.JWTSecure.domain.Learning;
 import com.example.JWTSecure.mapper.CurriculumMapper;
 import com.example.JWTSecure.repo.CurriculumRepo;
 import com.example.JWTSecure.repo.LearningRepo;
 import com.example.JWTSecure.service.CurriculumService;
 import com.example.JWTSecure.service.FilesStorageService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,10 +48,14 @@ public class CurriculumServiceImpl implements CurriculumService {
 
     @Override
     public SearchResultDTO<CurriculumDTO> findByCourseId(Long courseID, Integer page) {
-        List<CurriculumDTO> rs = curriculumRepo.findByCourseId(courseID, PageRequest.of(page, 20))
-                .stream().map(CurriculumMapper::toDto).collect(Collectors.toList());
-        return rs.isEmpty() ?
-                SearchResultDTO.defaultNotFound() : SearchResultDTO.<CurriculumDTO>defaultSuccess().addListResultData(rs);
+        Page<Curriculum> curriculums = curriculumRepo.findByCourseId(courseID, PageRequest.of(page, 20));
+        if (curriculums.isEmpty() && curriculums.getTotalElements() == 0L) {
+            return SearchResultDTO.defaultNotFound();
+        }
+        SearchResultDTO<CurriculumDTO> rs = SearchResultDTO.defaultSuccess();
+        rs.setResultData(curriculums.get().map(CurriculumMapper::toDto).collect(Collectors.toList()));
+        rs.setTotalRecordNoLimit((int) curriculums.getTotalElements());
+        return rs;
     }
 
     @Override
@@ -87,12 +90,11 @@ public class CurriculumServiceImpl implements CurriculumService {
             Curriculum curriculum = optional.get();
             String filename = curriculum.getLinkURL();
             if (StringUtils.hasLength(filename) && filesStorageService.isExist(filename)) {
-                if (filesStorageService.delete(filename)){
+                if (filesStorageService.delete(filename)) {
                     curriculum.setLinkURL("");
                     curriculum.setUpdatedAt(LocalDateTime.now());
-                    optional.map(e -> curriculumRepo.save(curriculum)) ;
-                }
-                else
+                    optional.map(e -> curriculumRepo.save(curriculum));
+                } else
                     throw new RuntimeException("Delete Curriculum file error");
             }
             return optional.map(CurriculumMapper::toDto).orElse(null);
