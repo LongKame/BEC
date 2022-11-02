@@ -39,6 +39,16 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public SearchResultDTO<CourseDTO> getAllCourse(Integer page) {
         Page<Course> courses =  courseRepo.findAll(PageRequest.of(page, 20));
+        return convertPageResult(courses);
+    }
+
+    @Override
+    public SearchResultDTO<CourseDTO> searchByLevel(Long levelId, Integer page) {
+        Page<Course> courses =  courseRepo.findByLevelId(levelId, PageRequest.of(page, 20));
+        return convertPageResult(courses);
+    }
+
+    private SearchResultDTO<CourseDTO> convertPageResult(Page<Course> courses) {
         if(courses.isEmpty() && courses.getTotalElements() == 0L) {
             return SearchResultDTO.defaultNotFound();
         }

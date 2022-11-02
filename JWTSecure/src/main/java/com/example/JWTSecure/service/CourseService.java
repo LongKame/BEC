@@ -12,4 +12,6 @@ public interface CourseService {
     CourseDTO getCourse(Long id);
 
     SearchResultDTO<CourseDTO> getAllCourse(Integer page);
+
+    SearchResultDTO<CourseDTO> searchByLevel(Long levelId, Integer page);
 }

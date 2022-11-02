@@ -1,6 +1,7 @@
 package com.example.JWTSecure.controller;
 
 import com.example.JWTSecure.DTO.CourseDTO;
+import com.example.JWTSecure.DTO.SearchResultDTO;
 import com.example.JWTSecure.domain.Course;
 import com.example.JWTSecure.service.CourseService;
 import lombok.AllArgsConstructor;
@@ -30,8 +31,15 @@ public class CourseController {
     }
 
     @GetMapping("")
-    public CourseDTO getAllCourse(@RequestParam Integer page) {
+    public SearchResultDTO<CourseDTO> getAllCourse(@RequestParam Integer page) {
         return courseService.getAllCourse(page);
+    }
+
+    @GetMapping("level")
+    public SearchResultDTO<CourseDTO> searchByLevel(
+            @RequestParam Long levelId, @RequestParam Integer page
+    ) {
+        return courseService.searchByLevel(levelId, page);
     }
 
 }
