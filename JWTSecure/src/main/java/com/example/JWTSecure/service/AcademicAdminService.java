@@ -14,5 +14,5 @@ public interface AcademicAdminService {
     ResponseStatus addAcad(AddAcademicAdminDTO addAcademicAdminDTO);
     AcademicAdminDTO viewProfile(AcademicAdminDTO academicAdminDTO);
     ResponseStatus editAcad(AddAcademicAdminDTO addAcademicAdminDTO);
-    ResponseStatus deleteAcad(AddAcademicAdminDTO addAcademicAdminDTO);
+    ResponseStatus deleteAcad(Long id);
 }

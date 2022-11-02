@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public class AddAcademicAdminDTO {
 
     private Long id;
-    private String username;
-    private String fullname;
+    private String user_name;
+    private String full_name;
     private String password;
     private String email;
     private String phone;

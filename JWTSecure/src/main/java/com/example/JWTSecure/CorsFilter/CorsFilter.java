@@ -1,7 +1,6 @@
 package com.example.JWTSecure.CorsFilter;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

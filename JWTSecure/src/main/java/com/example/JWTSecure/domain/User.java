@@ -31,10 +31,11 @@ public class User implements UserDetails{
             sequenceName = "users_sequence",
             allocationSize = 1
     )
-    @GeneratedValue(
-            strategy = GenerationType.AUTO,
-            generator = "users_sequence"
-    )
+//    @GeneratedValue(
+//            strategy = GenerationType.AUTO,
+//            generator = "users_sequence"
+//    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
     private Long id;
     @Column(name="username")
@@ -54,7 +55,7 @@ public class User implements UserDetails{
     @Column(name="enabled")
     private boolean enabled;
 
-    public User(String username, String fullname, String password, String email, String phone, String address, boolean active) {
+    public User(Long id,String username, String fullname, String password, String email, String phone, String address, boolean active, boolean enabled) {
         this.id = id;
         this.username = username;
         this.fullname = fullname;
@@ -63,6 +64,7 @@ public class User implements UserDetails{
         this.phone = phone;
         this.address = address;
         this.active = active;
+        this.enabled = enabled;
     }
 
     public User(String username, String password, String fullname, String email, String phone, String address) {
@@ -80,10 +82,6 @@ public class User implements UserDetails{
         return Collections.singletonList(authority);
     }
 
-//    public Boolean getEnabled() {
-//        return enabled;
-//    }
-
     @Override
     public String getPassword() {
         return password;
@@ -91,7 +89,7 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

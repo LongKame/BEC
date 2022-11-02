@@ -20,10 +20,6 @@ public class AcademicAdminResource {
 
     private final AcademicAdminService academicAdminService;
     private final RoomService roomService;
-//    @PostMapping("/add_quiz")
-//    public ResponseEntity<ResponseStatus> addTeacher(@RequestBody AddTeacherDTO addTeacherDTO) {
-//        return ResponseEntity.ok().body(academicAdminService.addTeacher(addTeacherDTO));
-//    }
 
     @GetMapping("/get_quiz/{id}")
     public ResponseEntity<List<Quiz>> getTeachers(@PathVariable Long id) {
@@ -45,9 +41,9 @@ public class AcademicAdminResource {
         return ResponseEntity.ok().body(roomService.editRoom(room));
     }
 
-    @DeleteMapping("/delete_room")
+    @PutMapping("/delete_room")
     public ResponseEntity<ResponseStatus> deleteRoom(@RequestBody Room room) {
-        return ResponseEntity.ok().body(roomService.deleteRoom(room));
+        return ResponseEntity.ok().body(roomService.deleteRoom(room.getId()));
     }
 
 }

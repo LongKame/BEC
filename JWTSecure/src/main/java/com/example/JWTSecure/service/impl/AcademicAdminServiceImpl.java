@@ -81,7 +81,7 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
         List<AcademicAdminDTO> dataResult;
         SearchResultDTO<AcademicAdminDTO> searchResult = new SearchResultDTO<>();
         try {
-            Integer totalRecord = academicAdminCustomRepo.doSearch(academicAdminDTO).size();
+            Integer totalRecord = academicAdminCustomRepo.getTotal(academicAdminDTO).size();
             dataResult = academicAdminCustomRepo.doSearch(academicAdminDTO);
             if (dataResult != null && !dataResult.isEmpty()) {
                 searchResult.setCode("0");
@@ -119,7 +119,7 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
         StringBuilder message = new StringBuilder();
 
         if (addAcademicAdminDTO != null) {
-            if (userRepo.findByUsername(addAcademicAdminDTO.getUsername()) != null) {
+            if (userRepo.findByUsername(addAcademicAdminDTO.getUser_name()) != null) {
                 message.append("Username ");
             }
             if (userRepo.findByEmail(addAcademicAdminDTO.getEmail()) != null) {
@@ -132,11 +132,11 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
                 return rs;
             }
             try {
-                if (userRepo.findByUsername(addAcademicAdminDTO.getUsername()) == null) {
+                if (userRepo.findByUsername(addAcademicAdminDTO.getUser_name()) == null) {
                     if (userRepo.findByEmail(addAcademicAdminDTO.getEmail()) == null) {
                         if (userRepo.findByPhone(addAcademicAdminDTO.getPhone()) == null) {
-                            user.setUsername(addAcademicAdminDTO.getUsername());
-                            user.setFullname(addAcademicAdminDTO.getFullname());
+                            user.setUsername(addAcademicAdminDTO.getUser_name());
+                            user.setFullname(addAcademicAdminDTO.getFull_name());
                             user.setPassword(passwordEncoder.encode(addAcademicAdminDTO.getPassword()));
                             user.setEmail(addAcademicAdminDTO.getEmail());
                             user.setPhone(addAcademicAdminDTO.getPhone());
@@ -144,9 +144,8 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
                             user.setActive(addAcademicAdminDTO.isActive());
                             userRepo.save(user);
 
-                            academicAdmin.setUserId(userRepo.findTopByOrderByIdDesc().getId());
+                            academicAdmin.setUserId(userRepo.findByUsername(addAcademicAdminDTO.getUser_name()).getId());
                             academicAdmin.setRoleId(2L);
-
                             academicAdminRepo.save(academicAdmin);
                             rs.setMessage("Ok");
                             rs.setState(true);
@@ -178,7 +177,7 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
         AcademicAdmin academicAdmin = new AcademicAdmin();
 
         if (addAcademicAdminDTO != null) {
-            if (userRepo.findByUsername(addAcademicAdminDTO.getUsername()) != null) {
+            if (userRepo.findByUsername(addAcademicAdminDTO.getUser_name()) != null) {
                 message.append("Username ");
             }
             if (userRepo.findByEmail(addAcademicAdminDTO.getEmail()) != null) {
@@ -192,14 +191,11 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
             }
 
             try {
-                if (userRepo.findByUsername(addAcademicAdminDTO.getUsername()) == null) {
+                if (userRepo.findByUsername(addAcademicAdminDTO.getUser_name()) == null) {
                     if (userRepo.findByEmail(addAcademicAdminDTO.getEmail()) == null) {
-                        academicAdmin.setUserId(addAcademicAdminDTO.getId());
-                        academicAdmin.setRoleId(2L);
-                        acadRepo.save(academicAdmin);
                         user.setId(addAcademicAdminDTO.getId());
                         user.setUsername(userRepo.findById(addAcademicAdminDTO.getId()).get().getUsername());
-                        user.setFullname(addAcademicAdminDTO.getFullname());
+                        user.setFullname(addAcademicAdminDTO.getFull_name());
                         user.setPassword(userRepo.findById(addAcademicAdminDTO.getId()).get().getPassword());
                         user.setEmail(userRepo.findById(addAcademicAdminDTO.getId()).get().getEmail());
                         user.setPhone(addAcademicAdminDTO.getPhone());
@@ -222,17 +218,21 @@ public class AcademicAdminServiceImpl implements AcademicAdminService {
     }
 
     @Override
-    public ResponseStatus deleteAcad(AddAcademicAdminDTO addAcademicAdminDTO) {
+    public ResponseStatus deleteAcad(Long id) {
         ResponseStatus responseStatus = new ResponseStatus();
         try {
-            Long userId = acadRepo.findById(addAcademicAdminDTO.getId()).get().getUserId();
-            userRepo.deActive(false, userId);
-            responseStatus.setMessage("Ok");
-            responseStatus.setState(true);
+            if (id != null) {
+                userRepo.deactive(id);
+                responseStatus.setState(true);
+                responseStatus.setMessage("Success");
+            } else {
+                responseStatus.setState(false);
+                responseStatus.setMessage("Failure");
+            }
             return responseStatus;
         } catch (Exception e) {
-            responseStatus.setMessage("Failure");
             responseStatus.setState(false);
+            responseStatus.setMessage("Failure");
             return responseStatus;
         }
     }
