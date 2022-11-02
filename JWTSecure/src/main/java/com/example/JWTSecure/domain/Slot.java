@@ -28,7 +28,7 @@ public class Slot {
     )
     private Long id;
     @Column(name="room_id")
-    private int roomId;
+    private Integer roomId;
     @Column(name="class_id")
     private Long classId;
     @Column(name="activities_id")
