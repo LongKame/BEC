@@ -18,4 +18,6 @@ public interface CurriculumService {
     CurriculumDTO uploadFile(Long id, MultipartFile file);
 
     CurriculumDTO deleteFile(Long id);
+
+    CurriculumDTO deleteCurriculum(Long id);
 }

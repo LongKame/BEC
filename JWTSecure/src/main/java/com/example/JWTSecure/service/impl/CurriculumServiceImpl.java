@@ -102,4 +102,10 @@ public class CurriculumServiceImpl implements CurriculumService {
             throw new RuntimeException("Not found Curriculum");
         }
     }
+
+    @Override
+    public CurriculumDTO deleteCurriculum(Long id) {
+        Optional<Curriculum> optional = curriculumRepo.findById(id);
+        return null;
+    }
 }

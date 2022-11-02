@@ -20,37 +20,41 @@ public class CurriculumController {
         return curriculumService.save(curr);
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     public CurriculumDTO updateCurriculum(@RequestBody Curriculum curr) throws Exception {
         if (curr.getId() == null) throw new Exception("Id of Curriculum must not null");
         return curriculumService.save(curr);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public SearchResultDTO<CurriculumDTO> findById(@PathVariable Long id) {
         return curriculumService.getCurriculum(id);
     }
 
-    @GetMapping("/get-by-course")
+    @GetMapping("get-by-course")
     public SearchResultDTO<CurriculumDTO> findByCourseId(
             @RequestParam Long courseId, @RequestParam Integer page
     ) {
         return curriculumService.findByCourseId(courseId, page);
     }
 
-    @GetMapping("/{id}/count-learning")
+    @GetMapping("{id}/count-learning")
     public Long countLearningStudent(@PathVariable Long id) {
         return curriculumService.countLearningStudent(id);
     }
 
-    @PutMapping("/{id}/upload-file")
-    public CurriculumDTO uploadFile(@PathVariable Long id ,@RequestParam MultipartFile file) {
+    @PutMapping("{id}/upload-file")
+    public CurriculumDTO uploadFile(@PathVariable Long id, @RequestParam MultipartFile file) {
         return curriculumService.uploadFile(id, file);
     }
 
-    @PutMapping("/{id}/delete-file")
-    public CurriculumDTO deleteFile(@PathVariable Long id ) {
+    @PutMapping("{id}/delete-file")
+    public CurriculumDTO deleteFile(@PathVariable Long id) {
         return curriculumService.deleteFile(id);
     }
 
+    @DeleteMapping("{id}")
+    public CurriculumDTO deleteCurriculum(@PathVariable Long id) {
+        return curriculumService.deleteCurriculum(id);
+    }
 }
